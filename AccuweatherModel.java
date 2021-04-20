@@ -10,6 +10,7 @@ import okhttp3.Response;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AccuweatherModel {
@@ -82,54 +83,36 @@ public class AccuweatherModel {
             List<DailyForecast> dailyForecasts = objectMapper.readValue(dailyForecastsString, new TypeReference<List<DailyForecast>>() {});
             System.out.println(dailyForecasts);
 
+
+
             DailyForecastModelForDB dailyForecastModelForDB1 = new DailyForecastModelForDB();
-            dailyForecastModelForDB1.setCity(selectedCity);
-            dailyForecastModelForDB1.setLocalDate(dailyForecasts.get(0).getDate());
-            dailyForecastModelForDB1.setTempMin(dailyForecasts.get(0).getTemperatureObject().getMinimum().getValue());
-            dailyForecastModelForDB1.setTempMax(dailyForecasts.get(0).getTemperatureObject().getMaximum().getValue());
-            dailyForecastModelForDB1.setTextDay(dailyForecasts.get(0).getDayObject().getIconPhrase());
-            dailyForecastModelForDB1.setTextNight(dailyForecasts.get(0).getNightObject().getIconPhrase());
-
             DailyForecastModelForDB dailyForecastModelForDB2 = new DailyForecastModelForDB();
-            dailyForecastModelForDB2.setCity(selectedCity);
-            dailyForecastModelForDB2.setLocalDate(dailyForecasts.get(1).getDate());
-            dailyForecastModelForDB2.setTempMin(dailyForecasts.get(1).getTemperatureObject().getMinimum().getValue());
-            dailyForecastModelForDB2.setTempMax(dailyForecasts.get(1).getTemperatureObject().getMaximum().getValue());
-            dailyForecastModelForDB2.setTextDay(dailyForecasts.get(1).getDayObject().getIconPhrase());
-            dailyForecastModelForDB2.setTextNight(dailyForecasts.get(1).getNightObject().getIconPhrase());
-
             DailyForecastModelForDB dailyForecastModelForDB3 = new DailyForecastModelForDB();
-            dailyForecastModelForDB3.setCity(selectedCity);
-            dailyForecastModelForDB3.setLocalDate(dailyForecasts.get(2).getDate());
-            dailyForecastModelForDB3.setTempMin(dailyForecasts.get(2).getTemperatureObject().getMinimum().getValue());
-            dailyForecastModelForDB3.setTempMax(dailyForecasts.get(2).getTemperatureObject().getMaximum().getValue());
-            dailyForecastModelForDB3.setTextDay(dailyForecasts.get(2).getDayObject().getIconPhrase());
-            dailyForecastModelForDB3.setTextNight(dailyForecasts.get(2).getNightObject().getIconPhrase());
-
             DailyForecastModelForDB dailyForecastModelForDB4 = new DailyForecastModelForDB();
-            dailyForecastModelForDB4.setCity(selectedCity);
-            dailyForecastModelForDB4.setLocalDate(dailyForecasts.get(3).getDate());
-            dailyForecastModelForDB4.setTempMin(dailyForecasts.get(3).getTemperatureObject().getMinimum().getValue());
-            dailyForecastModelForDB4.setTempMax(dailyForecasts.get(3).getTemperatureObject().getMaximum().getValue());
-            dailyForecastModelForDB4.setTextDay(dailyForecasts.get(3).getDayObject().getIconPhrase());
-            dailyForecastModelForDB4.setTextNight(dailyForecasts.get(3).getNightObject().getIconPhrase());
-
             DailyForecastModelForDB dailyForecastModelForDB5 = new DailyForecastModelForDB();
-            dailyForecastModelForDB5.setCity(selectedCity);
-            dailyForecastModelForDB5.setLocalDate(dailyForecasts.get(4).getDate());
-            dailyForecastModelForDB5.setTempMin(dailyForecasts.get(4).getTemperatureObject().getMinimum().getValue());
-            dailyForecastModelForDB5.setTempMax(dailyForecasts.get(4).getTemperatureObject().getMaximum().getValue());
-            dailyForecastModelForDB5.setTextDay(dailyForecasts.get(4).getDayObject().getIconPhrase());
-            dailyForecastModelForDB5.setTextNight(dailyForecasts.get(4).getNightObject().getIconPhrase());
 
+            ArrayList<DailyForecastModelForDB> dailyForecastModelForDBList = new ArrayList<>();
+            dailyForecastModelForDBList.add(dailyForecastModelForDB1);
+            dailyForecastModelForDBList.add(dailyForecastModelForDB2);
+            dailyForecastModelForDBList.add(dailyForecastModelForDB3);
+            dailyForecastModelForDBList.add(dailyForecastModelForDB4);
+            dailyForecastModelForDBList.add(dailyForecastModelForDB5);
+
+            for (int i = 0; i < 5; i++){
+                dailyForecastModelForDBList.get(i)
+                        .setCity(selectedCity)
+                        .setLocalDate(dailyForecasts.get(i).getDate())
+                        .setTempMin(dailyForecasts.get(i).getTemperatureObject().getMinimum().getValue())
+                        .setTempMax(dailyForecasts.get(i).getTemperatureObject().getMaximum().getValue())
+                        .setTextDay(dailyForecasts.get(i).getDayObject().getIconPhrase())
+                        .setTextNight(dailyForecasts.get(i).getNightObject().getIconPhrase());
+            }
 
             DataBaseRepository dataBaseRepository = new DataBaseRepository();
             try {
-                dataBaseRepository.saveWeatherData(dailyForecastModelForDB1);
-                dataBaseRepository.saveWeatherData(dailyForecastModelForDB2);
-                dataBaseRepository.saveWeatherData(dailyForecastModelForDB3);
-                dataBaseRepository.saveWeatherData(dailyForecastModelForDB4);
-                dataBaseRepository.saveWeatherData(dailyForecastModelForDB5);
+                for (int i = 0; i < 5; i++){
+                    dataBaseRepository.saveWeatherData(dailyForecastModelForDBList.get(i));
+                }
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
